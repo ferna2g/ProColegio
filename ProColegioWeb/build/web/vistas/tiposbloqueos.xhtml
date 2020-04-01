@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Administracion de Tipos de Bloqueos</title>
+    </h:head>
+ <body>
+     <h:form id="principal" style="alignment-adjust: central">
+            <p:messages autoUpdate="true" showDetail="true" />
+            <f:event type="preRenderView" listener="#{tiposbloqueo.listar('F')}"></f:event>
+            <h:panelGrid columns="2">
+
+                <h:column>
+                    <p:commandButton  oncomplete="PF('dialogoTiposbloqueoCrea').show();" value="Nuevo" update=":creaTiposbloqueo">
+                    </p:commandButton>
+           
+                </h:column>
+            </h:panelGrid>
+            <p:dataTable id="datos" value="#{tiposbloqueo.milista}" var="us" rowKey="#{us.idtipobloqueo}" selectionMode="single"  
+                         rows="10" paginatorPosition="bottom"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" >
+                <!--    Style="width:400px;position:absolute;top:150px;"; -->
+                <f:facet name="header">
+                    Administracion de Tipos de Bloqueos
+                </f:facet>
+                <p:column headerText="Codigo Tipo de Bloqueo">
+                    #{us.idtipobloqueo}
+                </p:column>
+                <p:column headerText="Tipo de Bloqueo"  filterBy="#{us.tipobloqueo}"
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.tipobloqueo}
+                </p:column>
+
+                <p:column headerText="Operaciones">
+                    <p:commandButton  actionListener="#{tiposbloqueo.seleccionar(us)}" oncomplete="PF('dialogoTiposbloqueoVer').show();" icon="ui-icon-search" update=":VerTiposbloqueo">
+                    </p:commandButton>
+                    <p:commandButton  actionListener="#{tiposbloqueo.seleccionar(us)}" oncomplete="PF('dialogoTiposbloqueoActualiza').show();" icon="ui-icon-update" update=":actualizaTiposbloqueo">
+                    </p:commandButton>
+                </p:column>
+                 <p:ajax event="rowSelect"  oncomplete="PF('dialogoTiposbloqueoVer').show();" 
+                       listener="#{tiposbloqueo.seleccionarfilas}"  update=":VerTiposbloqueo"></p:ajax> 
+            </p:dataTable>
+        </h:form>
+        <p:dialog header="Crear Tipos de Bloqueos" widgetVar="dialogoTiposbloqueoCrea" resizable="false" id="creaTiposbloqueo" showEffect="fade" hideEffect="explode" modal="true" >
+
+            <h:form style="alignment-adjust: central">
+                <h:panelGrid id="display" columns="2" cellpadding="4" style="margin: 0 auto;">
+
+                    <p:outputLabel for="txtTiposbloqueo" value="Tipos de Bloqueos">
+                    </p:outputLabel> 
+                    <p:inputText id="txtTiposbloqueo" value="#{tiposbloqueo.dto.tipobloqueo}"></p:inputText>
+                    
+                    <f:facet name="footer">
+                        <p:separator ></p:separator>
+                        <p:commandButton id="btnCreacurso1" 
+                                         oncomplete="PF('dialogoTiposbloqueoCrea').hide();" icon="ui-icon-new" update=":principal"
+                                         process="@form"
+                                         value="Guardar" actionListener="#{tiposbloqueo.inserta()}" >                          
+                        </p:commandButton>
+                        <p:commandButton id="btnCancelainsercion" value="Cancelar" icon="ui-icon-cancel" oncomplete="PF('dialogoTiposbloqueoCrea').hide();">
+                    </p:commandButton>
+
+                    </f:facet>
+                </h:panelGrid>
+            </h:form>                
+        </p:dialog>
+        <p:dialog header="Actualizar Tipos de Bloqueos" widgetVar="dialogoTiposbloqueoActualiza" resizable="false" id="actualizaTiposbloqueo" showEffect="fade" hideEffect="explode" modal="true" >
+
+            <h:form style="alignment-adjust: central">
+                <h:panelGrid id="displayActualiza" columns="2" cellpadding="4" style="margin: 0 auto;">
+
+                    <p:outputLabel for="txtTiposbloqueo1" value="Tipos de Bloqueos">
+                    </p:outputLabel> 
+                    <p:inputText id="txtTiposbloqueo1" value="#{tiposbloqueo.dto.tipobloqueo}"></p:inputText>
+
+                    <f:facet name="footer">
+                        <p:separator ></p:separator>
+                       <p:commandButton id="btnCreausuario" 
+                                         oncomplete="PF('dialogoTiposbloqueoActualiza').hide();" icon="ui-icon-new" update=":principal"
+                                         process="@form"
+                                         value="Modificar" actionListener="#{tiposbloqueo.actualiza()}" >                                
+                        </p:commandButton>
+                        
+                        <p:commandButton id="btnCancela"  value="Cancelar" oncomplete="PF('dialogoTiposbloqueoActualiza').hide();"></p:commandButton>
+
+                    </f:facet>
+                </h:panelGrid>
+            </h:form>  
+        </p:dialog>
+
+
+        <p:dialog header="Ver Tipos Bloqueos" widgetVar="dialogoTiposbloqueoVer" resizable="false" id="VerTiposbloqueo" showEffect="fade" hideEffect="explode" modal="true" >
+
+            <h:form style="alignment-adjust: central">
+                <h:panelGrid id="displayVer" columns="2" cellpadding="4" style="margin: 0 auto;">
+
+                    <p:outputLabel for="txtTiposbloqueover" value="Tipos de Bloqueos">
+                    </p:outputLabel> 
+                    <p:inputText id="txtTiposbloqueover" value="#{tiposbloqueo.dto.tipobloqueo}"></p:inputText>
+
+                    <f:facet name="footer">
+                        <p:separator ></p:separator>
+              
+                    </f:facet>
+                </h:panelGrid>
+            </h:form>
+
+        </p:dialog>
+
+    </body>
+</html>

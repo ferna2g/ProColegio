@@ -1,0 +1,259 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Inicio</title>
+    </h:head>
+    <body>
+        <h:form id="principal" style="alignment-adjust: central">
+            <p:messages autoUpdate="true" showDetail="true" />
+            <f:event type="preRenderView" listener="#{usuario.listar('F')}"></f:event>
+            <h:panelGrid columns="3">
+                <h:column>
+                    <p:menubar>
+                        <p:menuitem value="Principal" url="faces/vistas/principal.xhtml"/>
+                        <p:menuitem value="Usuarios" url="faces/vistas/usuarios.xhtml"/>
+                        <p:menuitem value="Detalle Usuarios" url="faces/vistas/detusuarios.xhtml"/>
+                        <p:menuitem value="Estudiantes" url="faces/vistas/estudiantes.xhtml"/>
+                        <p:menuitem value="Maestros" url="faces/vistas/maestros.xhtml"/>
+                        <p:menuitem value="Asignacion de Maestros" url="faces/vistas/maestroxcurso.xhtml"/>
+                        <p:menuitem value="Tipos de Usuarios" url="faces/vistas/tiposusuarios.xhtml"/>
+                        <p:menuitem value="Cursos" url="faces/vistas/cursos.xhtml"/>
+                        <p:menuitem value="Cursos por Grado" url="faces/vistas/cursosxgrado.xhtml"/>
+                        <p:menuitem value="Niveles" url="faces/vistas/gradoacademico.xhtml"/>
+                        <p:menuitem value="Estados" url="faces/vistas/estados.xhtml"/>
+                        <p:menuitem value="Tipos de Bloqueos" url="faces/vistas/tiposbloqueos.xhtml"/>
+                        <p:menuitem value="Usuarios Bloqueados" url="faces/vistas/usuariosbloqueado.xhtml"/>
+                    </p:menubar>
+                    <p:commandButton  oncomplete="PF('dialogoUsuarioCrea').show();" value="Nuevo" update=":creaUsuario">
+                    </p:commandButton>
+
+                </h:column>
+            </h:panelGrid>
+            <p:dataTable id="datos" value="#{usuario.milista}" var="us" rowKey="#{us.idusuario}" selectionMode="single"  
+                         rows="10" paginatorPosition="bottom"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" >
+                <!--    Style="width:400px;position:absolute;top:150px;"; -->
+                <f:facet name="header">
+                    USUARIOS
+                </f:facet>
+                <p:column headerText="Codigo Usuario">
+                    #{us.idusuario}
+                </p:column>
+                <p:column headerText="Nombre" 
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.nombre}
+                </p:column>
+                <p:column headerText="Apellidos"
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.apellidos}
+                </p:column>
+                <p:column headerText="Usuario"  filterBy="#{us.username}"
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.username}
+                </p:column>
+                <p:column headerText="Contraseña">
+                    #{us.pass}
+                </p:column>
+                <p:column headerText="Correo" 
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.correo}
+                </p:column>
+                <p:column headerText="Fecha Nacimiento" 
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.fnacimiento}
+                </p:column>
+                <p:column headerText="Fecha Registro" 
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.fregistro}
+                </p:column>
+                <p:column headerText="Direccion" 
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.direccion}
+                </p:column>
+                <p:column headerText="Telefono" 
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.telefono}
+                </p:column>
+                <p:column headerText="Estado usuario" filterBy="#{us.estadousuario}"
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.estadousuario}
+                </p:column>
+                <p:column headerText="Tipo Usuario"
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.idtipousuario}
+                </p:column>
+                <p:column headerText="Operaciones">
+                    <p:commandButton  actionListener="#{usuario.seleccionar(us)}" oncomplete="PF('dialogoUsuarioVer').show();" icon="ui-icon-search" update=":VerUsuario">
+                    </p:commandButton>
+                    <p:commandButton  actionListener="#{usuario.seleccionar(us)}" oncomplete="PF('dialogoUsuarioActualiza').show();" icon="ui-icon-update" update=":actualizaUsuario">
+                    </p:commandButton>
+
+                </p:column>
+                <p:ajax event="rowSelect"  oncomplete="PF('dialogoUsuarioVer').show();" 
+                        listener="#{usuario.seleccionarfilas}"  update=":VerUsuario"></p:ajax> 
+            </p:dataTable>
+        </h:form>
+        <p:dialog header="Crear Usuario" widgetVar="dialogoUsuarioCrea" resizable="false" id="creaUsuario" showEffect="fade" hideEffect="explode" modal="true" >
+
+            <h:form style="alignment-adjust: central">
+                <h:panelGrid id="display" columns="2" cellpadding="4" style="margin: 0 auto;">
+                    <p:outputLabel for="txtNombre" value="Nombre">
+                    </p:outputLabel> 
+                    <p:inputText id="txtNombre" value="#{usuario.dto.nombre}"></p:inputText>
+                    <p:outputLabel for="txtApellidos" value="Apellidos">
+                    </p:outputLabel> 
+                    <p:inputText id="txtApellidos" value="#{usuario.dto.apellidos}"></p:inputText>
+
+                    <p:outputLabel for="txtUser" value="Username">
+                    </p:outputLabel> 
+                    <p:inputText id="txtUser" value="#{usuario.dto.username}"></p:inputText>
+
+                    <p:outputLabel for="txtPass" value ="Contraseña" > </p:outputLabel>
+                    <p:inputText id="txtPass"  value="#{usuario.dto.pass}"></p:inputText>
+                    <p:outputLabel for="txtCorreo" value="Correo">
+                    </p:outputLabel> 
+                    <p:inputText id="txtCorreo" value="#{usuario.dto.correo}"></p:inputText>
+                    <p:outputLabel for="txtfnacimiento" value="Fecha Nacimiento">
+                    </p:outputLabel>
+                    <p:calendar id="txtfnacimiento" value="#{usuario.dto.fnacimiento}" showOn="button" />
+                    <p:outputLabel for="txtfregistro" value="Fecha Registro">
+                    </p:outputLabel> 
+                    <p:calendar id="txtfregistro" value="#{usuario.dto.fregistro}" showOn="button" />
+                    <p:outputLabel for="txtDireccion" value="Dirección">
+                    </p:outputLabel> 
+                    <p:inputText id="txtDireccion" value="#{usuario.dto.direccion}"></p:inputText>
+                    <p:outputLabel for="txtTelefono" value="Teléfono">
+                    </p:outputLabel> 
+                    <p:inputText id="txtTelefono" value="#{usuario.dto.telefono}"></p:inputText>
+                    <p:outputLabel for="txtEstado" value="Estado Usuario">
+                    </p:outputLabel>
+                    <p:inputText id="txtEstado" value="#{usuario.dto.estadousuario}"></p:inputText>
+                    <p:outputLabel for="txttipousuario" value="Tipo Usuario">
+                    </p:outputLabel>
+                    <p:inputText id="txttipousuario" value="#{usuario.dto.idtipousuario}"></p:inputText>
+
+                    <f:facet name="footer">
+                        <p:separator ></p:separator>
+                        <p:commandButton id="btnCreausuario1" 
+                                         oncomplete="PF('dialogoUsuarioCrea').hide();" icon="ui-icon-new" update=":principal"
+                                         process="@form"
+                                         value="guardar" actionListener="#{usuario.inserta()}" >
+
+
+                        </p:commandButton>
+                        <p:commandButton id="btnCancelainsercion" value="Cancelar" icon="ui-icon-cancel" oncomplete="PF('dialogoUsuarioCrea').hide();">
+                        </p:commandButton>
+
+                    </f:facet>
+                </h:panelGrid>
+            </h:form>                
+        </p:dialog>
+        <p:dialog header="Actualizar Usuario" widgetVar="dialogoUsuarioActualiza" resizable="false" id="actualizaUsuario" showEffect="fade" hideEffect="explode" modal="true" >
+
+            <h:form style="alignment-adjust: central">
+                <h:panelGrid id="displayActualiza" columns="2" cellpadding="4" style="margin: 0 auto;">
+                    <p:outputLabel for="txtNombre1" value="Nombre">
+                    </p:outputLabel> 
+                    <p:inputText id="txtNombre1" value="#{usuario.dto.nombre}"></p:inputText>
+                    <p:outputLabel for="txtApellido1" value="Username">
+                    </p:outputLabel> 
+                    <p:inputText id="txtApellido1" value="#{usuario.dto.apellidos}"></p:inputText>
+                    <p:outputLabel for="txtUser1" value="Username">
+                    </p:outputLabel> 
+                    <p:inputText id="txtUser1" value="#{usuario.dto.username}"></p:inputText>
+                    <p:outputLabel for="txtPass1" value ="Contraseña" > </p:outputLabel>
+                    <p:inputText id="txtPass1"  value="#{usuario.dto.pass}"></p:inputText>
+                    <p:outputLabel for="txtCorreo1" value="Correo">
+                    </p:outputLabel> 
+                    <p:inputText id="txtCorreo1" value="#{usuario.dto.correo}"></p:inputText>
+                    <p:outputLabel for="txtfnacimiento1" value="Fecha Nacimiento">
+                    </p:outputLabel>
+                    <p:inputText id="txtfnacimiento1" value="#{usuario.dto.fnacimiento}"></p:inputText>
+                    <p:outputLabel for="txtfregistro1" value="Fecha Registro">
+                    </p:outputLabel> 
+                    <p:inputText id="txtfregistro1" value="#{usuario.dto.fregistro}"></p:inputText>
+                    <p:outputLabel for="txtDireccion1" value="Direccion">
+                    </p:outputLabel> 
+                    <p:inputText id="txtDireccion1" value="#{usuario.dto.direccion}"></p:inputText>
+                    <p:outputLabel for="txtTelefono1" value="Telefono">
+                    </p:outputLabel> 
+                    <p:inputText id="txtTelefono1" value="#{usuario.dto.telefono}"></p:inputText>
+                    <p:outputLabel for="txtEstado1" value="Estado Usuario">
+                    </p:outputLabel>
+                    <p:inputText id="txtEstado1" value="#{usuario.dto.estadousuario}"></p:inputText>
+                    <p:outputLabel for="txttipo1" value="Tipo Usuario">
+                    </p:outputLabel> 
+                    <p:inputText id="txttipo1" value="#{usuario.dto.idtipousuario}"></p:inputText>
+                    <f:facet name="footer">
+                        <p:separator ></p:separator>
+                        <p:commandButton id="btnCreausuario" 
+                                         oncomplete="PF('dialogoUsuarioActualiza').hide();" icon="ui-icon-new" update=":principal"
+                                         process="@form"
+                                         value="Modificar" actionListener="#{usuario.actualiza()}" >
+
+                        </p:commandButton>
+
+                        <p:commandButton id="btnCancela"  value="Cancelar" oncomplete="PF('dialogoUsuarioActualiza').hide();"></p:commandButton>
+
+                    </f:facet>
+                </h:panelGrid>
+            </h:form>  
+        </p:dialog>
+
+
+        <p:dialog header="Ver Usuario" widgetVar="dialogoUsuarioVer" resizable="false" id="VerUsuario" showEffect="fade" hideEffect="explode" modal="true" >
+
+            <h:form style="alignment-adjust: central">
+                <h:panelGrid id="displayVer" columns="2" cellpadding="4" style="margin: 0 auto;">
+                    <p:outputLabel for="txtNombrever" value="Nombre">
+                    </p:outputLabel> 
+                    <p:inputText id="txtNombrever" value="#{usuario.dto.nombre}"></p:inputText>
+                    <p:outputLabel for="txtApellidover" value="Apellidos">
+                    </p:outputLabel> 
+                    <p:inputText id="txtApellidover" value="#{usuario.dto.apellidos}"></p:inputText>
+                    <p:outputLabel for="txtUserver" value="Username">
+                    </p:outputLabel> 
+                    <p:inputText id="txtUserver" value="#{usuario.dto.username}"></p:inputText>
+
+                    <p:outputLabel for="txtPassver" value ="Contraseña" > </p:outputLabel>
+                    <p:inputText id="txtPassver"  value="#{usuario.dto.pass}"></p:inputText>
+
+                    <p:outputLabel for="txtCorreover" value="Correo">
+                    </p:outputLabel> 
+                    <p:inputText id="txtCorreover" value="#{usuario.dto.correo}"></p:inputText>
+                    <p:outputLabel for="txtfnacimientover" value="Fecha Nacimiento">
+                    </p:outputLabel> 
+                    <p:inputText id="txtfnacimientover" value="#{usuario.dto.fnacimiento}"></p:inputText>
+                    <p:outputLabel for="txtfregistrover" value="Fecha Registro">
+                    </p:outputLabel> 
+                    <p:inputText id="txtfregistrover" value="#{usuario.dto.fregistro}"></p:inputText>
+                    <p:outputLabel for="txtDireccionver" value="Direccion">
+                    </p:outputLabel> 
+                    <p:inputText id="txtDireccionver" value="#{usuario.dto.direccion}"></p:inputText>
+                    <p:outputLabel for="txtTelefonover" value="Username">
+                    </p:outputLabel> 
+                    <p:inputText id="txtTelefonover" value="#{usuario.dto.telefono}"></p:inputText>
+                    <p:outputLabel for="txtfestadover" value="Estado Usuario">
+                    </p:outputLabel> 
+                    <p:inputText id="txtfestadover" value="#{usuario.dto.estadousuario}"></p:inputText>
+                    <p:outputLabel for="txttipousuariover" value="Tipo Usuario">
+                    </p:outputLabel> 
+                    <p:inputText id="txttipousuariover" value="#{usuario.dto.idtipousuario}"></p:inputText>
+                    <f:facet name="footer">
+                        <p:separator ></p:separator>
+
+                    </f:facet>
+                </h:panelGrid>
+            </h:form>
+
+        </p:dialog>
+
+    </body>
+</html>
+

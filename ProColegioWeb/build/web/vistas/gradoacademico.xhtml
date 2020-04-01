@@ -1,0 +1,123 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Administracion de Niveles Academicos</title>
+    </h:head>
+ <body>
+     <h:form id="principal" style="alignment-adjust: central">
+            <p:messages autoUpdate="true" showDetail="true" />
+            <f:event type="preRenderView" listener="#{gradoacademico.listar('F')}"></f:event>
+            <h:panelGrid columns="2">
+                
+                <p:menubar>
+                    <p:menuitem value="Principal" url="/faces/index.xhtml"/>
+                    <p:menuitem value="Usuarios" url="usuarios.xhtml"/>
+                    <p:menuitem value="Cursos" url="cursos.xhtml"/>
+                </p:menubar>
+                
+                <h:column>
+                    <p:commandButton  oncomplete="PF('dialogoNivelCrea').show();" value="Nuevo" update=":creaNivel">
+                    </p:commandButton>
+           
+                </h:column>
+            </h:panelGrid>
+            <p:dataTable id="datos" value="#{gradoacademico.milista}" var="us" rowKey="#{us.idgrado}" selectionMode="single"  
+                         rows="10" paginatorPosition="bottom"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" >
+                <!--    Style="width:400px;position:absolute;top:150px;"; -->
+                <f:facet name="header">
+                    Administracion de Niveles Academicos
+                </f:facet>
+                <p:column headerText="Codigo Nivel">
+                    #{us.idgrado}
+                </p:column>
+                <p:column headerText="Nivel"  filterBy="#{us.nivel}"
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.nivel}
+                </p:column>
+
+                <p:column headerText="Operaciones">
+                    <p:commandButton  actionListener="#{gradoacademico.seleccionar(us)}" oncomplete="PF('dialogoNivelVer').show();" icon="ui-icon-search" update=":VerNivel">
+                    </p:commandButton>
+                    <p:commandButton  actionListener="#{gradoacademico.seleccionar(us)}" oncomplete="PF('dialogoNivelActualiza').show();" icon="ui-icon-update" update=":actualizaNivel">
+                    </p:commandButton>
+                </p:column>
+                 <p:ajax event="rowSelect"  oncomplete="PF('dialogoNivelVer').show();" 
+                       listener="#{gradoacademico.seleccionarfilas}"  update=":VerNivel"></p:ajax> 
+            </p:dataTable>
+        </h:form>
+        <p:dialog header="Crear Nivel" widgetVar="dialogoNivelCrea" resizable="false" id="creaNivel" showEffect="fade" hideEffect="explode" modal="true" >
+
+            <h:form style="alignment-adjust: central">
+                <h:panelGrid id="display" columns="2" cellpadding="4" style="margin: 0 auto;">
+
+                    <p:outputLabel for="txtNivel" value="Nivel">
+                    </p:outputLabel> 
+                    <p:inputText id="txtNivel" value="#{gradoacademico.dto.nivel}"></p:inputText>
+                    
+                    <f:facet name="footer">
+                        <p:separator ></p:separator>
+                        <p:commandButton id="btnCreanivel1" 
+                                         oncomplete="PF('dialogoNivelCrea').hide();" icon="ui-icon-new" update=":principal"
+                                         process="@form"
+                                         value="Guardar" actionListener="#{gradoacademico.inserta()}" >                          
+                        </p:commandButton>
+                        <p:commandButton id="btnCancelainsercion" value="Cancelar" icon="ui-icon-cancel" oncomplete="PF('dialogoNivelCrea').hide();">
+                    </p:commandButton>
+
+                    </f:facet>
+                </h:panelGrid>
+            </h:form>                
+        </p:dialog>
+        <p:dialog header="Actualizar Nivel" widgetVar="dialogoNivelActualiza" resizable="false" id="actualizaNivel" showEffect="fade" hideEffect="explode" modal="true" >
+
+            <h:form style="alignment-adjust: central">
+                <h:panelGrid id="displayActualiza" columns="2" cellpadding="4" style="margin: 0 auto;">
+
+                    <p:outputLabel for="txtNivel1" value="Nivel">
+                    </p:outputLabel> 
+                    <p:inputText id="txtNivel1" value="#{gradoacademico.dto.nivel}"></p:inputText>
+
+                    <f:facet name="footer">
+                        <p:separator ></p:separator>
+                       <p:commandButton id="btnCreanivel" 
+                                         oncomplete="PF('dialogoNivelActualiza').hide();" icon="ui-icon-new" update=":principal"
+                                         process="@form"
+                                         value="Modificar" actionListener="#{gradoacademico.actualiza()}" >                                
+                        </p:commandButton>
+                        
+                        <p:commandButton id="btnCancela"  value="Cancelar" oncomplete="PF('dialogoNivelActualiza').hide();"></p:commandButton>
+
+                    </f:facet>
+                </h:panelGrid>
+            </h:form>  
+        </p:dialog>
+
+
+        <p:dialog header="Ver Nivel" widgetVar="dialogoNivelVer" resizable="false" id="VerNivel" showEffect="fade" hideEffect="explode" modal="true" >
+
+            <h:form style="alignment-adjust: central">
+                <h:panelGrid id="displayVer" columns="2" cellpadding="4" style="margin: 0 auto;">
+
+                    <p:outputLabel for="txtNivelver" value="Nivel">
+                    </p:outputLabel> 
+                    <p:inputText id="txtNivelver" value="#{gradoacademico.dto.nivel}"></p:inputText>
+
+                    <f:facet name="footer">
+                        <p:separator ></p:separator>
+              
+                    </f:facet>
+                </h:panelGrid>
+            </h:form>
+
+        </p:dialog>
+
+    </body>
+</html>
+

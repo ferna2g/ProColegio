@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Asignacion de Cursos a Maestros</title>
+    </h:head>
+ <body>
+     <h:form id="principal" style="alignment-adjust: central">
+            <p:messages autoUpdate="true" showDetail="true" />
+            <f:event type="preRenderView" listener="#{maestroxcurso.listar('F')}"></f:event>
+            <h:panelGrid columns="2">
+
+                <h:column>
+                    <p:commandButton  oncomplete="PF('dialogoCursoCrea').show();" value="Nuevo" update=":creaCurso">
+                    </p:commandButton>
+           
+                </h:column>
+            </h:panelGrid>
+            <p:dataTable id="datos" value="#{maestroxcurso.milista}" var="us" rowKey="#{us.idmaestroxcurso}" selectionMode="single"  
+                         rows="10" paginatorPosition="bottom"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15" >
+                <!--    Style="width:400px;position:absolute;top:150px;"; -->
+                <f:facet name="header">
+                    Asignacion de Cursos a Maestros
+                </f:facet>
+                <p:column headerText="Codigo de Asignacion">
+                    #{us.idmaestroxcurso}
+                </p:column>
+                <p:column headerText="Maestro"  filterBy="#{us.idmaestro}"
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.idmaestro}
+                </p:column>
+                <p:column headerText="Curso"  filterBy="#{us.idcurso}"
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.idcurso}
+                </p:column>
+                <p:column headerText="Fecha de Asignacion" 
+                          footerText="contains" filterMatchMode="contains"   >
+                    #{us.fregistro}
+                </p:column>
+
+                <p:column headerText="Operaciones">
+                    <p:commandButton  actionListener="#{maestroxcurso.seleccionar(us)}" oncomplete="PF('dialogoCursoVer').show();" icon="ui-icon-search" update=":VerCurso">
+                    </p:commandButton>
+                    <p:commandButton  actionListener="#{maestroxcurso.seleccionar(us)}" oncomplete="PF('dialogoCursoActualiza').show();" icon="ui-icon-update" update=":actualizaCurso">
+                    </p:commandButton>
+                </p:column>
+                 <p:ajax event="rowSelect"  oncomplete="PF('dialogoCursoVer').show();" 
+                       listener="#{maestroxcurso.seleccionarfilas}"  update=":VerCurso"></p:ajax> 
+            </p:dataTable>
+        </h:form>
+        <p:dialog header="Crear Asignacion" widgetVar="dialogoCursoCrea" resizable="false" id="creaCurso" showEffect="fade" hideEffect="explode" modal="true" >
+
+            <h:form style="alignment-adjust: central">
+                <h:panelGrid id="display" columns="2" cellpadding="4" style="margin: 0 auto;">
+
+                    <p:outputLabel for="txtid" value="Curso">
+                    </p:outputLabel> 
+                    <p:inputText id="txtid" value="#{maestroxcurso.dto.idmaestro}"></p:inputText>
+                    <p:outputLabel for="txtmaestro" value="Maestro">
+                    </p:outputLabel> 
+                    <p:inputText id="txtmaestro" value="#{maestroxcurso.dto.idcurso}"></p:inputText>
+                    <p:outputLabel for="txtfecha" value="Fecha de Nacimiento">
+                    </p:outputLabel> 
+                    <p:inputText id="txtfecha" value="#{maestroxcurso.dto.fregistro}"></p:inputText>
+                    
+                    <f:facet name="footer">
+                        <p:separator ></p:separator>
+                        <p:commandButton id="btnCreacurso1" 
+                                         oncomplete="PF('dialogoCursoCrea').hide();" icon="ui-icon-new" update=":principal"
+                                         process="@form"
+                                         value="Guardar" actionListener="#{maestroxcurso.inserta()}" >                          
+                        </p:commandButton>
+                        <p:commandButton id="btnCancelainsercion" value="Cancelar" icon="ui-icon-cancel" oncomplete="PF('dialogoCursoCrea').hide();">
+                    </p:commandButton>
+
+                    </f:facet>
+                </h:panelGrid>
+            </h:form>                
+        </p:dialog>
+        <p:dialog header="Actualizar Asignacion" widgetVar="dialogoCursoActualiza" resizable="false" id="actualizaCurso" showEffect="fade" hideEffect="explode" modal="true" >
+
+            <h:form style="alignment-adjust: central">
+                <h:panelGrid id="displayActualiza" columns="2" cellpadding="4" style="margin: 0 auto;">
+
+                    <p:outputLabel for="txtmaestro1" value="Maestro">
+                    </p:outputLabel> 
+                    <p:inputText id="txtmaestro1" value="#{maestroxcurso.dto.idmaestro}"></p:inputText>
+                    <p:outputLabel for="txtcurso1" value="Curso">
+                    </p:outputLabel> 
+                    <p:inputText id="txtcurso1" value="#{maestroxcurso.dto.idcurso}"></p:inputText>
+                    <f:facet name="footer">
+                        <p:separator ></p:separator>
+                       <p:commandButton id="btnCreausuario" 
+                                         oncomplete="PF('dialogoCursoActualiza').hide();" icon="ui-icon-new" update=":principal"
+                                         process="@form"
+                                         value="Modificar" actionListener="#{maestroxcurso.actualiza()}" >                                
+                        </p:commandButton>
+                        
+                        <p:commandButton id="btnCancela"  value="Cancelar" oncomplete="PF('dialogoCursoActualiza').hide();"></p:commandButton>
+
+                    </f:facet>
+                </h:panelGrid>
+            </h:form>  
+        </p:dialog>
+
+
+        <p:dialog header="Ver Curso" widgetVar="dialogoCursoVer" resizable="false" id="VerCurso" showEffect="fade" hideEffect="explode" modal="true" >
+
+            <h:form style="alignment-adjust: central">
+                <h:panelGrid id="displayVer" columns="2" cellpadding="4" style="margin: 0 auto;">
+                    <p:outputLabel for="txtidver" value="Codigo de Asignacion">
+                    </p:outputLabel> 
+                    <p:inputText id="txtidver" value="#{maestroxcurso.dto.idmaestroxcurso}"></p:inputText>
+                    <p:outputLabel for="txtmaestrover" value="Maestro">
+                    </p:outputLabel> 
+                    <p:inputText id="txtmaestrover" value="#{maestroxcurso.dto.idmaestro}"></p:inputText>
+                    <p:outputLabel for="txtcursover" value="Curso">
+                    </p:outputLabel> 
+                    <p:inputText id="txtcursover" value="#{maestroxcurso.dto.idcurso}"></p:inputText>
+                    <p:outputLabel for="txtfechaver" value="Fecha de Asignacion">
+                    </p:outputLabel> 
+                    <p:inputText id="txtfechaver" value="#{maestroxcurso.dto.fregistro}"></p:inputText>
+
+                    <f:facet name="footer">
+                        <p:separator ></p:separator>
+              
+                    </f:facet>
+                </h:panelGrid>
+            </h:form>
+
+        </p:dialog>
+
+    </body>
+</html>
+
